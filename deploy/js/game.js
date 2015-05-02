@@ -86,16 +86,26 @@ lpg.play_state = {
 
         this.createItems();
 
+
     },
     update: function() {
         // this.updateShadowTexture();
         lpg.game.physics.arcade.collide(lpg.player, this.collideLayer);
         lpg.game.physics.arcade.collide(lpg.player, lpg.platform);
+
+        lpg.game.physics.arcade.overlap(lpg.player, lpg.items, this.collect, null, this);
+
         console.log("FPS: " + this.game.time.fps);
         this.playerMove();
         this.playerJump();
         this.toggleLight.onDown.add(this.lanternToggle, this);
     },
+        collect: function(player, collectable) {
+        console.log(collectable)
+
+        //remove sprite
+        collectable.destroy();
+      },
     playerMove: function() {
         if (this.cursors.left.isDown) {
             lpg.player.body.velocity.x = -300;
@@ -171,6 +181,7 @@ lpg.play_state = {
     //create items
     lpg.items = lpg.game.add.group();
     lpg.items.enableBody = true;
+    console.log(lpg.items)
     var item;    
     lpg.result = this.findObjectsByType('item', lpg.map, 'Objects');
     console.log(this.findObjectsByType('item', lpg.map, 'Objects'));

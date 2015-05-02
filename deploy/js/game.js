@@ -50,6 +50,7 @@ lpg.play_state = {
 
         this.Background = lpg.map.createLayer('Background');
         this.collideLayer = lpg.map.createLayer('Collide');
+        this.collideLayer.enableBody = true;
 
         lpg.map.setCollisionBetween(1, 10000, true, 'Collide');
 
@@ -107,7 +108,7 @@ lpg.play_state = {
         }
     },
     playerJump: function() {
-        if (this.cursors.up.isDown && lpg.player.body.touching.down) {
+        if (this.cursors.up.isDown && lpg.player.body.blocked.down) {
             lpg.player.body.velocity.y = -500;
         }
     },

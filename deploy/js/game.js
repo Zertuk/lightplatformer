@@ -123,12 +123,15 @@ lpg.play_state = {
             lpg.playerObject.secondJump = false;
         }
     },
-        collect: function(player, collectable) {
+    collect: function(player, collectable) {
         console.log(collectable)
         collectable.smoothed = false;
 
         collectable.scale.setTo(1.5, 1.5);
         lpg.playerObject.oil = lpg.playerObject.oil + 10;
+        if (lpg.playerObject.oil >= 100) {
+            lpg.playerObject.oil = 100.5;
+        }
         //remove sprite
         // collectable.destroy();
       },

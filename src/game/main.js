@@ -44,17 +44,22 @@ lpg.play_state = {
         lpg.player.body.gravity.y = 1000;
         lpg.player.body.collideWorldBounds = true;
 
+        lpg.playerObject = {
+            oil: 50,
+            health: 3,
+            lightOn: true
+        }
+
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.LIGHT_RADIUS = 300;
         this.toggleLight = this.game.input.keyboard.addKey(Phaser.Keyboard.F);
 
-        // this.shadowTexture = this.game.add.bitmapData(this.game.width, this.game.height);
-        // var lightSprite = this.game.add.image(0, 0, this.shadowTexture);
-        // lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
-        // this.game.input.activePointer.x = this.game.width;
-        // this.game.input.activePointer.y = this.game.height;
+        this.shadowTexture = this.game.add.bitmapData(this.game.width + 100, this.game.height + 100);
+        this.lightSprite = this.game.add.image(this.camera.x, this.camera.y, this.shadowTexture);
+        this.lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
 
+        this.game.camera.roundPx = false;
         this.game.camera.follow(lpg.player);
 
         this.createItems();
@@ -62,7 +67,8 @@ lpg.play_state = {
 
     },
     update: function() {
-        // this.updateShadowTexture();
+        this.lightSprite.reset(this.camera.x, this.camera.y);
+        this.updateShadowTexture();
         lpg.game.physics.arcade.collide(lpg.player, this.collideLayer);
         lpg.game.physics.arcade.collide(lpg.player, lpg.platform);
 
@@ -97,11 +103,14 @@ lpg.play_state = {
     },
     lanternToggle: function() {
         console.log('toggled');
-        if (this.LIGHT_RADIUS == 0) {
-            this.LIGHT_RADIUS = 300;
+        console.log(lpg.playerObject.lightOn);
+        if (lpg.playerObject.lightOn === true) {
+            lpg.playerObject.lightOn = false;
+            this.LIGHT_RADIUS = 0;
         }
         else {
-            this.LIGHT_RADIUS = 0;
+            lpg.playerObject.lightOn = true;
+            this.LIGHT_RADIUS = 300;
         }
     },
     updateShadowTexture: function() {
@@ -113,20 +122,25 @@ lpg.play_state = {
     // underneath it darker, while the white area is unaffected.
 
     // Draw shadow
+    // this.lightSprite.destroy();
+    // this.lightSprite = this.game.add.image(lpg.player.body.x , lpg.player.body.y - 200, this.shadowTexture );
 
     this.shadowTexture.context.fillStyle = 'rgb(30, 30, 30)';
     this.shadowTexture.context.fillRect(0, 0, this.game.width, this.game.height);
 
-     var gradient = this.shadowTexture.context.createRadialGradient(
-    lpg.player.body.x  + 20, lpg.player.body.y + 30, this.LIGHT_RADIUS * 0.75,
-    lpg.player.body.x  + 20, lpg.player.body.y + 30, this.LIGHT_RADIUS);
+    playerX = lpg.player.x - this.game.camera.x,
+    playerY = lpg.player.y - this.game.camera.y;
+
+    var gradient = this.shadowTexture.context.createRadialGradient(
+    playerX , playerY , this.LIGHT_RADIUS * 0,
+    playerX , playerY , this.LIGHT_RADIUS);
     gradient.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
     gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
 
     // Draw circle of light
     this.shadowTexture.context.beginPath();
     this.shadowTexture.context.fillStyle = gradient;
-    this.shadowTexture.context.arc(lpg.player.body.x  + 20, lpg.player.body.y + 30, this.LIGHT_RADIUS, 0, Math.PI*2);
+    this.shadowTexture.context.arc(playerX, playerY, this.LIGHT_RADIUS, 0, Math.PI*2, false);
     this.shadowTexture.context.fill();
 
     // This just tells the engine it should update the texture cache

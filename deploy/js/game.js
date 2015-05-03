@@ -36,6 +36,7 @@ lpg.load_state = {
         lpg.game.load.image('oil', '/assets/platform.png');
         lpg.game.load.image('tileset', '/assets/tileset.png');
         lpg.game.load.image('player', '/assets/player.png');
+        lpg.game.load.image('fuelUI', '/assets/fuelbase.png');
     },
     create: function() {
         this.game.state.start('play');
@@ -66,10 +67,14 @@ lpg.play_state = {
         // grounds.scale.setTo(20, 1);
 
 
+        lpg.fuelUI = lpg.game.add.sprite(10, 10, 'fuelUI');
+
+
         lpg.player = lpg.game.add.sprite(10, 250, 'player');
         lpg.game.physics.arcade.enable(lpg.player);
         lpg.player.body.gravity.y = 1000;
         lpg.player.body.collideWorldBounds = true;
+        lpg.player.scale.setTo(0.5,0.5);
 
         lpg.playerObject = {
             oil: 50,
@@ -104,11 +109,12 @@ lpg.play_state = {
         console.log("FPS: " + this.game.time.fps);
         this.playerMove();
         this.playerJump();
+        this.checkFuelUsage();
         this.toggleLight.onDown.add(this.lanternToggle, this);
     },
         collect: function(player, collectable) {
         console.log(collectable)
-
+        lpg.playerObject.oil = lpg.playerObject.oil + 10;
         //remove sprite
         collectable.destroy();
       },
@@ -129,15 +135,21 @@ lpg.play_state = {
         }
     },
     lanternToggle: function() {
-        console.log('toggled');
-        console.log(lpg.playerObject.lightOn);
-        if (lpg.playerObject.lightOn === true) {
+        if (lpg.playerObject.lightOn) {
             lpg.playerObject.lightOn = false;
             this.LIGHT_RADIUS = 0;
         }
         else {
             lpg.playerObject.lightOn = true;
             this.LIGHT_RADIUS = 300;
+        }
+    },
+    checkFuelUsage: function() {
+        if (lpg.playerObject.lightOn) {
+            if (lpg.playerObject.oil > 0) {
+                lpg.playerObject.oil = lpg.playerObject.oil - 0.2;
+            }
+            console.log(lpg.playerObject.oil)
         }
     },
     updateShadowTexture: function() {
@@ -151,6 +163,10 @@ lpg.play_state = {
     // Draw shadow
     // this.lightSprite.destroy();
     // this.lightSprite = this.game.add.image(lpg.player.body.x , lpg.player.body.y - 200, this.shadowTexture );
+    if (lpg.playerObject.oil <= 0) {
+        lpg.playerObject.lightOn = false;
+        this.LIGHT_RADIUS = 0;
+    }
 
     this.shadowTexture.context.fillStyle = 'rgb(30, 30, 30)';
     this.shadowTexture.context.fillRect(0, 0, this.game.width, this.game.height);

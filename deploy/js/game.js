@@ -25,9 +25,7 @@ b.exports=c,c.getUnvisitedNode=function(a){for(var b=a.length,c=0;c!==b;c++){var
 //# sourceMappingURL=phaser.map
 
 
-var lpg = {
-
-}
+var lpg = {};
 
 lpg.load_state = {
     preload: function() {
@@ -78,17 +76,19 @@ lpg.play_state = {
 
         lpg.player = lpg.game.add.sprite(10, 250, 'player');
         lpg.game.physics.arcade.enable(lpg.player);
-        lpg.player.body.gravity.y = 1000;
+        lpg.player.body.gravity.y = 3000;
         lpg.player.body.collideWorldBounds = true;
         lpg.player.scale.setTo(0.5,0.5);
 
         lpg.playerObject = {
             oil: 50,
             health: 3,
-            lightOn: true
+            lightOn: true,
+            secondJump: true
         }
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
+        this.cursors.up.onDown.add(this.playerJump, this);
 
         this.LIGHT_RADIUS = 300;
         this.toggleLight = this.game.input.keyboard.addKey(Phaser.Keyboard.F);
@@ -97,11 +97,13 @@ lpg.play_state = {
         this.lightSprite = this.game.add.image(this.camera.x, this.camera.y, this.shadowTexture);
         this.lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
 
-        this.game.camera.roundPx = false;
+        this.game.camera.roundPx = true
+        lpg.player.roundPx = true;
         this.game.camera.follow(lpg.player);
 
         this.createItems();
-
+        this.game.world.bringToTop(lpg.baseUI);
+        this.game.world.bringToTop(lpg.fuelUI);
 
     },
     update: function() {
@@ -115,9 +117,11 @@ lpg.play_state = {
 
         // console.log("FPS: " + this.game.time.fps);
         this.playerMove();
-        this.playerJump();
         this.checkFuelUsage();
         this.toggleLight.onDown.add(this.lanternToggle, this);
+        if (lpg.player.body.blocked.down) {
+            lpg.playerObject.secondJump = false;
+        }
     },
         collect: function(player, collectable) {
         console.log(collectable)
@@ -130,10 +134,10 @@ lpg.play_state = {
       },
     playerMove: function() {
         if (this.cursors.left.isDown) {
-            lpg.player.body.velocity.x = -300;
+            lpg.player.body.velocity.x = -325;
         }
         else if (this.cursors.right.isDown) {
-            lpg.player.body.velocity.x = 300;
+            lpg.player.body.velocity.x = 325;
         }
         else {
             lpg.player.body.velocity.x = 0;
@@ -141,7 +145,12 @@ lpg.play_state = {
     },
     playerJump: function() {
         if (this.cursors.up.isDown && lpg.player.body.blocked.down) {
-            lpg.player.body.velocity.y = -500;
+            lpg.player.body.velocity.y = -750;            
+        }
+        else if (!lpg.playerObject.secondJump && this.cursors.up.isDown) {
+            lpg.player.body.velocity.y = -600;
+            lpg.playerObject.secondJump = true;
+            console.log(lpg.playerObject.secondJump)
         }
     },
     lanternToggle: function() {

@@ -6,10 +6,11 @@ lpg.load_state = {
     preload: function() {
         this.load.tilemap('test', 'assets/test.json', null, Phaser.Tilemap.TILED_JSON);
         lpg.game.load.image('sky', '/assets/sky.png');
-        lpg.game.load.image('oil', '/assets/platform.png');
+        lpg.game.load.image('oil', '/assets/oil.png');
         lpg.game.load.image('tileset', '/assets/tileset.png');
         lpg.game.load.image('player', '/assets/player.png');
         lpg.game.load.image('fuelUI', '/assets/fuelbase.png');
+        lpg.game.load.image('baseUI', '/assets/uibase.png');
     },
     create: function() {
         this.game.state.start('play');
@@ -23,6 +24,12 @@ lpg.play_state = {
         lpg.map.addTilesetImage('tileset', 'tileset');
 
         this.Background = lpg.map.createLayer('Background');
+        lpg.baseUI = lpg.game.add.sprite(20, 20, 'baseUI');
+        lpg.baseUI.width = 200;
+        lpg.baseUI.fixedToCamera = true;
+        lpg.fuelUI = lpg.game.add.sprite(20, 20, 'fuelUI');
+        lpg.fuelUI.fixedToCamera = true;
+
         this.collideLayer = lpg.map.createLayer('Collide');
         this.collideLayer.enableBody = true;
 
@@ -40,7 +47,6 @@ lpg.play_state = {
         // grounds.scale.setTo(20, 1);
 
 
-        lpg.fuelUI = lpg.game.add.sprite(10, 10, 'fuelUI');
 
 
         lpg.player = lpg.game.add.sprite(10, 250, 'player');
@@ -72,6 +78,7 @@ lpg.play_state = {
 
     },
     update: function() {
+        lpg.fuelUI.width = lpg.playerObject.oil * 2;
         this.lightSprite.reset(this.camera.x, this.camera.y);
         this.updateShadowTexture();
         lpg.game.physics.arcade.collide(lpg.player, this.collideLayer);
@@ -79,7 +86,7 @@ lpg.play_state = {
 
         lpg.game.physics.arcade.overlap(lpg.player, lpg.items, this.collect, null, this);
 
-        console.log("FPS: " + this.game.time.fps);
+        // console.log("FPS: " + this.game.time.fps);
         this.playerMove();
         this.playerJump();
         this.checkFuelUsage();
@@ -87,9 +94,12 @@ lpg.play_state = {
     },
         collect: function(player, collectable) {
         console.log(collectable)
+        collectable.smoothed = false;
+
+        collectable.scale.setTo(1.5, 1.5);
         lpg.playerObject.oil = lpg.playerObject.oil + 10;
         //remove sprite
-        collectable.destroy();
+        // collectable.destroy();
       },
     playerMove: function() {
         if (this.cursors.left.isDown) {
@@ -122,7 +132,6 @@ lpg.play_state = {
             if (lpg.playerObject.oil > 0) {
                 lpg.playerObject.oil = lpg.playerObject.oil - 0.2;
             }
-            console.log(lpg.playerObject.oil)
         }
     },
     updateShadowTexture: function() {
@@ -185,7 +194,8 @@ lpg.play_state = {
     lpg.items = lpg.game.add.group();
     lpg.items.enableBody = true;
     console.log(lpg.items)
-    var item;    
+    var item;
+
     lpg.result = this.findObjectsByType('item', lpg.map, 'Objects');
     console.log(this.findObjectsByType('item', lpg.map, 'Objects'));
 
@@ -195,10 +205,10 @@ lpg.play_state = {
   },
     createFromTiledObject: function(element, group) {
     var sprite = group.create(element.x, element.y, element.properties.sprite);
-
       //copy all properties to the sprite
       Object.keys(element.properties).forEach(function(key){
         sprite[key] = element.properties[key];
+
       });
      }
 

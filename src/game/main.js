@@ -107,16 +107,17 @@ lpg.play_state = {
     },
     collect: function(player, collectable) {
         console.log(collectable)
-        collectable.smoothed = false;
-
-        collectable.scale.setTo(1.5, 1.5);
+        var text = this.game.add.text(collectable.body.x - 20, collectable.body.y - 20, "+10 oil", { font: "18px Arial", fill: "#ff0044", align: "center" });
+        collectable.destroy();
+        function destroyText() {
+            text.destroy();
+        }
         lpg.playerObject.oil = lpg.playerObject.oil + 10;
         if (lpg.playerObject.oil >= 100) {
             lpg.playerObject.oil = 100.5;
         }
-        //remove sprite
-        // collectable.destroy();
-      },
+        setTimeout(destroyText, 1000);
+    },
     playerMove: function() {
         if (this.cursors.left.isDown) {
             lpg.player.body.velocity.x = -325;

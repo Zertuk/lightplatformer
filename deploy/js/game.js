@@ -76,9 +76,11 @@ lpg.play_state = {
 
         lpg.player = lpg.game.add.sprite(10, 250, 'player');
         lpg.game.physics.arcade.enable(lpg.player);
+        lpg.player.anchor.setTo(0.5, 1);
         lpg.player.body.gravity.y = 3000;
         lpg.player.body.collideWorldBounds = true;
-        lpg.player.scale.setTo(0.5,0.5);
+        lpg.player.smoothed = false;
+        lpg.player.scale.setTo(2, 2);
 
         lpg.playerObject = {
             oil: 50,
@@ -122,6 +124,13 @@ lpg.play_state = {
         if (lpg.player.body.blocked.down) {
             lpg.playerObject.secondJump = false;
         }
+        this.checkDeath();
+    },
+    checkDeath: function() {
+        console.log(lpg.player.body.y);
+        if (lpg.player.body.y > 670) {
+            console.log('dead');
+        }
     },
     collect: function(player, collectable) {
         console.log(collectable)
@@ -138,9 +147,11 @@ lpg.play_state = {
     playerMove: function() {
         if (this.cursors.left.isDown) {
             lpg.player.body.velocity.x = -325;
+            lpg.player.scale.x = 2;
         }
         else if (this.cursors.right.isDown) {
             lpg.player.body.velocity.x = 325;
+            lpg.player.scale.x = -2;
         }
         else {
             lpg.player.body.velocity.x = 0;
@@ -189,7 +200,7 @@ lpg.play_state = {
         this.LIGHT_RADIUS = 0;
     }
 
-    this.shadowTexture.context.fillStyle = 'rgb(30, 30, 30)';
+    this.shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';
     this.shadowTexture.context.fillRect(0, 0, this.game.width, this.game.height);
 
     playerX = lpg.player.x - this.game.camera.x,

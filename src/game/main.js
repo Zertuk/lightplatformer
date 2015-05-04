@@ -2,7 +2,7 @@ var lpg = {};
 
 lpg.load_state = {
     preload: function() {
-        this.load.tilemap('test', 'assets/test.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('test', '/assets/test.json', null, Phaser.Tilemap.TILED_JSON);
         lpg.game.load.image('sky', '/assets/sky.png');
         lpg.game.load.image('oil', '/assets/oil.png');
         lpg.game.load.image('tileset', '/assets/tileset.png');
@@ -19,7 +19,7 @@ lpg.play_state = {
     create: function() {
 
         lpg.map = this.game.add.tilemap('test');
-        lpg.map.addTilesetImage('tileset', 'tileset');
+        lpg.map.addTilesetImage('lpgtiles', 'tileset');
 
         this.Background = lpg.map.createLayer('Background');
         lpg.baseUI = lpg.game.add.sprite(20, 20, 'baseUI');
@@ -40,14 +40,10 @@ lpg.play_state = {
         lpg.platform = lpg.game.add.group();
         lpg.platform.enableBody = true;
 
-        // var grounds = lpg.platform.create(0, 368, 'platform');
-        // grounds.body.immovable = true;
-        // grounds.scale.setTo(20, 1);
 
 
 
-
-        lpg.player = lpg.game.add.sprite(10, 250, 'player');
+        lpg.player = lpg.game.add.sprite(10, 0, 'player');
         lpg.game.physics.arcade.enable(lpg.player);
         lpg.player.anchor.setTo(0.5, 1);
         lpg.player.body.gravity.y = 3000;

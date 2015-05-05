@@ -36,6 +36,7 @@ lpg.load_state = {
 		lpg.game.load.image('player', '/assets/player.png');
 		lpg.game.load.image('fuelUI', '/assets/fuelbase.png');
 		lpg.game.load.image('baseUI', '/assets/uibase.png');
+		lpg.game.load.image('heart', '/assets/heart.png');
 	},
 	create: function() {
 		this.game.state.start('play');
@@ -48,12 +49,17 @@ lpg.play_state = {
 		lpg.map = this.game.add.tilemap('test');
 		lpg.map.addTilesetImage('lpgtiles', 'tileset');
 
+		this.Backset = lpg.map.createLayer('Backset');
 		this.Background = lpg.map.createLayer('Background');
 		lpg.baseUI = lpg.game.add.sprite(20, 20, 'baseUI');
 		lpg.baseUI.width = 200;
 		lpg.baseUI.fixedToCamera = true;
 		lpg.fuelUI = lpg.game.add.sprite(20, 20, 'fuelUI');
 		lpg.fuelUI.fixedToCamera = true;
+		lpg.heart = lpg.game.add.sprite(20, 36, 'heart');
+		lpg.heart.fixedToCamera = true;
+		lpg.heart.scale.setTo(1.5, 1.5);
+		lpg.heart.smoothed = false;
 
 		this.collideLayer = lpg.map.createLayer('Collide');
 		this.collideLayer.enableBody = true;
@@ -102,6 +108,7 @@ lpg.play_state = {
 		this.createItems();
 		this.game.world.bringToTop(lpg.baseUI);
 		this.game.world.bringToTop(lpg.fuelUI);
+		this.game.world.bringToTop(lpg.heart);
 
 	},
 	update: function() {
@@ -177,7 +184,7 @@ lpg.play_state = {
 	checkFuelUsage: function() {
 		if (lpg.playerObject.lightOn) {
 			if (lpg.playerObject.oil > 0) {
-				lpg.playerObject.oil = lpg.playerObject.oil - 0.2;
+				lpg.playerObject.oil = lpg.playerObject.oil - 0.01;
 			}
 		}
 	},

@@ -8,7 +8,8 @@ lpg.load_state = {
 		lpg.game.load.image('tileset', '/assets/tileset.png');
 		lpg.game.load.image('player', '/assets/player.png');
 		lpg.game.load.image('fuelUI', '/assets/fuelbase.png');
-		lpg.game.load.image('baseUI', '/assets/uibase.png');
+		lpg.game.load.image('baseUI', '/assets/platform.png');
+		lpg.game.load.image('basebase', '/assets/uibase.png');
 		lpg.game.load.image('heart', '/assets/heart.png');
 	},
 	create: function() {
@@ -24,7 +25,13 @@ lpg.play_state = {
 
 		this.Backset = lpg.map.createLayer('Backset');
 		this.Background = lpg.map.createLayer('Background');
+
+		lpg.basebase = lpg.game.add.sprite(19, 19, 'basebase');
+		lpg.basebase.width = 202;
+		lpg.basebase.height = 18;
+		lpg.basebase.fixedToCamera = true;
 		lpg.baseUI = lpg.game.add.sprite(20, 20, 'baseUI');
+		lpg.baseUI.height = 16;
 		lpg.baseUI.width = 200;
 		lpg.baseUI.fixedToCamera = true;
 		lpg.fuelUI = lpg.game.add.sprite(20, 20, 'fuelUI');
@@ -79,6 +86,7 @@ lpg.play_state = {
 		this.game.camera.follow(lpg.player);
 
 		this.createItems();
+		this.game.world.bringToTop(lpg.basebase);
 		this.game.world.bringToTop(lpg.baseUI);
 		this.game.world.bringToTop(lpg.fuelUI);
 		this.game.world.bringToTop(lpg.heart);

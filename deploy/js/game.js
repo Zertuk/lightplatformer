@@ -128,7 +128,7 @@ lpg.play_state = {
 
 		lpg.game.physics.arcade.overlap(lpg.player, lpg.items, this.collect, null, this);
 
-		// console.log("FPS: " + this.game.time.fps);
+		console.log("FPS: " + this.game.time.fps);
 		this.playerMove();
 		this.checkFuelUsage();
 		this.toggleLight.onDown.add(this.lanternToggle, this);
@@ -176,7 +176,6 @@ lpg.play_state = {
 		else if (!lpg.playerObject.secondJump && this.cursors.up.isDown) {
 			lpg.player.body.velocity.y = -600;
 			lpg.playerObject.secondJump = true;
-			console.log(lpg.playerObject.secondJump)
 		}
 	},
 	lanternToggle: function() {
@@ -275,7 +274,7 @@ lpg.play_state = {
 	}
 }
 
-lpg.game = new Phaser.Game(800, 400, Phaser.AUTO, 'game_container');
+lpg.game = new Phaser.Game(800, 400, Phaser.CANVAS, 'game_container');
 
 lpg.game.state.add('loading', lpg.load_state);
 // game.state.add('menu', menu_state);
